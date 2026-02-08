@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hollywood Intro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+<style>
+body, html{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:'Poppins',sans-serif;
+    background:black;
+}
+
+/* Fullscreen Video */
+.video-frame{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border:0;
+    z-index:-2;
+}
+
+/* Overlay */
+.overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
+    z-index:1;
+}
+
+/* Logo Animation */
+.logo{
+    position:fixed;
+    top:20%;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:60px;
+    font-weight:700;
+    color:white;
+    letter-spacing:3px;
+    opacity:0;
+    animation:logoFade 2s forwards;
+    z-index:10;
+}
+@keyframes logoFade{
+0%{opacity:0; transform:translate(-50%,-50px) scale(0.5);}
+100%{opacity:1; transform:translate(-50%,0) scale(1);}
+}
+
+/* Typing Text */
+.typing-text{
+    position:fixed;
+    bottom:150px;
+    width:100%;
+    text-align:center;
+    font-size:40px;
+    color:white;
+    font-weight:600;
+    letter-spacing:2px;
+    z-index:10;
+}
+
+/* Skip Button */
+#skip{
+    position:fixed;
+    bottom:50px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:15px 45px;
+    font-size:18px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    background: rgba(255,255,255,0.2);
+    color:white;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index:10;
+}
+#skip:hover{
+    background: rgba(255,255,255,0.5);
+    transform:translateX(-50%) scale(1.05);
+}
+
+/* Sound Button */
+#sound{
+    position:fixed;
+    top:30px;
+    right:30px;
+    padding:10px 20px;
+    border:none;
+    border-radius:30px;
+    background: rgba(255,255,255,0.2);
+    color:white;
+    cursor:pointer;
+    z-index:10;
+}
+
+/* Particle Canvas */
+#particles{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    z-index:-1;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Video -->
+<iframe class="video-frame"
+src="https://drive.google.com/file/d/1Tgi6kDXSFK4RToASXtUHus1KyaB5-xXx/preview?autoplay=1"
+allow="autoplay; fullscreen"
+allowfullscreen>
+</iframe>
+
+<div class="overlay"></div>
+
+<!-- Particle Canvas -->
+<canvas id="particles"></canvas>
+
+<!-- Logo -->
+<div class="logo">Hey I am Yeasin Arafat</div>
+
+<!-- Typing Text -->
+<div class="typing-text" id="typing-text"></div>
+
+<!-- Skip Button -->
+<button id="skip">Skip in 5</button>
+
+<!-- Sound Button -->
+<button id="sound">Mute 🔇</button>
+
+<script>
+// Redirect URL
+const redirectURL = "https://sites.google.com/view/mdyeasinarafat992";
+
+// Typing Text Animation
+let message = "WELCOME TO MY WEBSITE";
+let index = 0;
+let typingText = document.getElementById("typing-text");
+function type(){
+    if(index < message.length){
+        typingText.innerHTML += message.charAt(index);
+        index++;
+        setTimeout(type, 100);
+    }
+}
+setTimeout(type, 1500);
+
+// Skip Countdown
+let timeLeft = 5;
+let skipBtn = document.getElementById("skip");
+let countdown = setInterval(()=>{
+    if(timeLeft > 0){
+        skipBtn.innerText = "Skip in " + timeLeft;
+        timeLeft--;
+    } else {
+        skipBtn.innerText = "Enter Website";
+        clearInterval(countdown);
+    }
+},1000);
+
+// Skip Button Click
+skipBtn.onclick = ()=>{
+    window.location.href = redirectURL;
+};
+
+// Sound toggle
+let soundBtn = document.getElementById("sound");
+let isMuted = true;
+soundBtn.onclick = ()=>{
+    const iframe = document.querySelector('.video-frame');
+    isMuted = !isMuted;
+    if(isMuted){
+        soundBtn.innerText = "Mute 🔇";
+        iframe.src = iframe.src.replace("autoplay=1","autoplay=1&mute=1");
+    } else{
+        soundBtn.innerText = "Unmute 🔊";
+        iframe.src = iframe.src.replace("&mute=1","");
+    }
+};
+
+// Auto redirect after 30 sec
+setTimeout(()=>{ window.location.href = redirectURL; },30000);
+
+// -------------------
+// Particle Animation
+// -------------------
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particlesArray = [];
+
+class Particle{
+    constructor(){
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+        this.size = Math.random()*3 + 1;
+        this.speedX = (Math.random()-0.5)*1.5;
+        this.speedY = (Math.random()-0.5)*1.5;
+        this.color = 'rgba(255,255,255,0.5)';
+    }
+    update(){
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if(this.x <0 || this.x>canvas.width) this.speedX*=-1;
+        if(this.y <0 || this.y>canvas.height) this.speedY*=-1;
+    }
+    draw(){
+        ctx.fillStyle=this.color;
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function initParticles(){ particlesArray=[]; for(let i=0;i<100;i++){ particlesArray.push(new Particle()); } }
+initParticles();
+
+function animateParticles(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particlesArray.forEach(p=>{ p.update(); p.draw(); });
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+window.addEventListener('resize',()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+});
+</script>
+
+</body>
+</html>
