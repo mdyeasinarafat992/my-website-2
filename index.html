@@ -3,33 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Epic Iron Man HUD Intro</title>
+<title>Ultimate J.A.R.V.I.S HUD Intro</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
 body{overflow:hidden;background:black;}
 
-/* Cinematic bars */
-body::before, body::after{
-content:"";position:fixed;width:100%;height:60px;background:black;z-index:999;
-}
+/* Cinematic top/bottom bars */
+body::before, body::after{content:"";position:fixed;width:100%;height:60px;background:black;z-index:999;}
 body::before{top:0;} body::after{bottom:0;}
 
-/* Overlay for cinematic glow */
-.overlay{
-position:fixed;width:100%;height:100%;
-background:rgba(0,0,0,.65);
-z-index:-2;
-}
+/* Overlay glow */
+.overlay{position:fixed;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:-2;}
 
 /* Typing text */
 .title{
-position:absolute;top:20%;left:50%;
+position:absolute;top:15%;left:50%;
 transform:translate(-50%,-50%);
 font-size:clamp(24px,6vw,72px);
 letter-spacing:4px;color:#00f7ff;
-text-shadow:0 0 20px #00f7ff, 0 0 40px #00f7ff;
+text-shadow:0 0 20px #00f7ff,0 0 40px #00f7ff;
 border-right:3px solid #00f7ff;
 padding-right:8px;
 white-space:nowrap;
@@ -38,128 +31,52 @@ z-index:10;
 }
 @keyframes cursor{50%{border-color:transparent;}}
 
-/* Hologram HUD wrapper */
+/* HUD wrapper */
 .holo-wrap{
 position:absolute;top:50%;left:50%;
 transform:translate(-50%,-50%);
-width:min(350px,70vw);
-height:min(350px,70vw);
+width:min(400px,75vw);
+height:min(400px,75vw);
 perspective:1000px;
 z-index:5;
 animation:float 4s ease-in-out infinite;
 }
-@keyframes float{
-0%,100%{transform:translate(-50%, -50%) translateY(0);}
-50%{transform:translate(-50%, -50%) translateY(-15px);}
-}
+@keyframes float{0%,100%{transform:translate(-50%, -50%) translateY(0);}50%{transform:translate(-50%, -50%) translateY(-15px);}}
 
 /* Base HUD ring */
-.hud-ring{
-position:absolute;top:50%;left:50%;
-border-radius:50%;
-transform:translate(-50%,-50%);
-}
+.hud-ring{position:absolute;top:50%;left:50%;border-radius:50%;transform:translate(-50%,-50%);}
 
-/* Ring 1: segmented rotating arcs */
-.ring1{
-width:120%; height:120%;
-border:2px solid rgba(0,247,255,.4);
-box-shadow:0 0 20px #00f7ff,0 0 40px #00f7ff inset;
-clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%);
-animation:spin 18s linear infinite;
-}
+/* Rings */
+.ring1{width:120%;height:120%;border:2px solid rgba(0,247,255,.4);box-shadow:0 0 20px #00f7ff,0 0 40px #00f7ff inset;animation:spin 18s linear infinite;}
+.ring2{width:140%;height:140%;border:2px dashed rgba(0,247,255,.5);animation:spinReverse 25s linear infinite;}
+.ring3{width:80%;height:80%;border:1px solid rgba(0,247,255,.6);box-shadow:0 0 10px #00f7ff inset;animation:blink 2s infinite;}
+.crosshair{position:absolute;top:50%;left:50%;width:50%; height:50%;border:1px solid rgba(0,247,255,.7);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 20px #00f7ff inset;animation:spin 30s linear infinite;}
+.scanline{position:absolute;top:0;left:0;width:100%; height:2px;background:rgba(0,247,255,.3);animation:scan 3s linear infinite;z-index:6;}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+@keyframes spinReverse{from{transform:translate(-50%,-50%) rotate(360deg);}to{transform:translate(-50%,-50%) rotate(0deg);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes scan{0%{top:0;}100%{top:100%;}}
 
-/* Ring 2: dashed orbiting ring */
-.ring2{
-width:140%; height:140%;
-border:2px dashed rgba(0,247,255,.5);
-animation:spinReverse 25s linear infinite;
-}
+/* Orbiting dots */
+.orbit-dot{position:absolute;top:50%;left:50%;width:6px;height:6px;background:#00f7ff;border-radius:50%;box-shadow:0 0 10px #00f7ff;transform:translate(-50%,-50%);}
 
-/* Ring 3: inner concentric line */
-.ring3{
-width:80%; height:80%;
-border:1px solid rgba(0,247,255,.6);
-box-shadow:0 0 10px #00f7ff inset;
-animation:blink 2s infinite;
-}
+/* Rotating HUD numbers */
+.hud-number{position:absolute;top:50%;left:50%;color:#00f7ff;font-size:12px;letter-spacing:2px;transform:translate(-50%,-50%);opacity:.7;}
 
-/* Ring 4: small rotating crosshairs */
-.crosshair{
-position:absolute;top:50%;left:50%;
-width:50%; height:50%;
-border:1px solid rgba(0,247,255,.7);
-border-radius:50%;
-transform:translate(-50%,-50%);
-box-shadow:0 0 20px #00f7ff inset;
-animation:spin 30s linear infinite;
-}
-
-/* Ring animations */
-@keyframes spin{
-from{transform:translate(-50%,-50%) rotate(0deg);}
-to{transform:translate(-50%,-50%) rotate(360deg);}
-}
-@keyframes spinReverse{
-from{transform:translate(-50%,-50%) rotate(360deg);}
-to{transform:translate(-50%,-50%) rotate(0deg);}
-}
-@keyframes blink{
-0%,100%{opacity:1;}
-50%{opacity:.3;}
-}
-
-/* Holographic scan line */
-.scanline{
-position:absolute;top:0;left:0;
-width:100%; height:2px;
-background:rgba(0,247,255,.3);
-animation:scan 3s linear infinite;
-z-index:6;
-}
-@keyframes scan{
-0%{top:0;}
-100%{top:100%;}
-}
+/* Tiny rotating icons */
+.hud-icon{position:absolute;top:50%;left:50%;width:8px;height:8px;background:#00f7ff;clip-path:polygon(50% 0,100% 100%,0 100%);transform:translate(-50%,-50%);}
 
 /* Enter button */
-#enter{
-position:absolute;bottom:90px;left:50%;
-transform:translateX(-50%);
-padding:14px 55px;
-border-radius:50px;
-border:1px solid rgba(0,247,255,.3);
-background:rgba(0,247,255,.08);
-color:#00f7ff;font-size:16px;
-cursor:pointer;
-backdrop-filter:blur(10px);
-transition:.4s;
-z-index:10;
-}
-#enter:hover{
-box-shadow:0 0 40px #00f7ff;
-}
-
-/* Exit animation */
-.exit{
-animation:warp .8s forwards ease-in;
-}
-@keyframes warp{
-to{
-opacity:0;
-transform:scale(2);
-filter:blur(20px);
-}
-}
-
-/* Particles canvas */
+#enter{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);padding:14px 55px;border-radius:50px;border:1px solid rgba(0,247,255,.3);background:rgba(0,247,255,.08);color:#00f7ff;font-size:16px;cursor:pointer;backdrop-filter:blur(10px);transition:.4s;z-index:10;}
+#enter:hover{box-shadow:0 0 40px #00f7ff;}
+/* Exit animation (optional) */
+.exit{animation:warp .8s forwards ease-in;}
+@keyframes warp{to{opacity:0;transform:scale(2);filter:blur(20px);}}
 canvas{position:fixed;top:0;left:0;z-index:-1;}
 </style>
 </head>
-
 <body>
 <div class="overlay"></div>
-
 <div class="title" id="typing"></div>
 
 <div class="holo-wrap" id="scene">
@@ -172,68 +89,73 @@ canvas{position:fixed;top:0;left:0;z-index:-1;}
 
 <button id="enter">ENTER SYSTEM</button>
 
-<canvas id="particles"></canvas>
+<!-- Orbiting dots, numbers, icons -->
+<script>
+const scene=document.getElementById('scene');
+let dots=[],numbers=[],icons=[];
 
+// Orbiting dots
+for(let i=0;i<25;i++){
+  let dot=document.createElement('div');dot.className='orbit-dot';scene.appendChild(dot);
+  let r=90+Math.random()*70,s=0.01+Math.random()*0.02,a=Math.random()*Math.PI*2;
+  dots.push({el:dot,r:r,s:s,a:a});
+}
+
+// Rotating numbers
+for(let i=0;i<12;i++){
+  let num=document.createElement('div');num.className='hud-number';
+  num.innerText=Math.floor(Math.random()*100);scene.appendChild(num);
+  let r=50+Math.random()*50,s=0.005+Math.random()*0.01,a=Math.random()*Math.PI*2;
+  numbers.push({el:num,r:r,s:s,a:a});
+}
+
+// Tiny icons
+for(let i=0;i<15;i++){
+  let ic=document.createElement('div');ic.className='hud-icon';scene.appendChild(ic);
+  let r=60+Math.random()*80,s=0.008+Math.random()*0.015,a=Math.random()*Math.PI*2;
+  icons.push({el:ic,r:r,s:s,a:a});
+}
+
+// Animation
+function moveHUD(){
+  dots.forEach(d=>{d.a+=d.s;let x=Math.cos(d.a)*d.r;let y=Math.sin(d.a)*d.r;d.el.style.transform=`translate(${x}px,${y}px)`;});
+  numbers.forEach(n=>{n.a+=n.s;let x=Math.cos(n.a)*n.r;let y=Math.sin(n.a)*n.r;n.el.style.transform=`translate(${x}px,${y}px)`;});
+  icons.forEach(i=>{i.a+=i.s;let x=Math.cos(i.a)*i.r;let y=Math.sin(i.a)*i.r;i.el.style.transform=`translate(${x}px,${y}px)`;});
+  requestAnimationFrame(moveHUD);
+}
+moveHUD();
+</script>
+
+<canvas id="particles"></canvas>
 <audio id="bgSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
 
 <script>
 /* Typing effect */
 const text="WELCOME YEASIN ARAFAT";
-let i=0;
-const typing=document.getElementById('typing');
-function type(){
-if(i<text.length){
-typing.innerHTML+=text.charAt(i++);
-setTimeout(type,70);
-}}
+let i=0;const typing=document.getElementById('typing');
+function type(){if(i<text.length){typing.innerHTML+=text.charAt(i++);setTimeout(type,70);}}
 setTimeout(type,700);
 
-/* Voice announcement */
+/* Voice */
 setTimeout(()=>{
-let msg=new SpeechSynthesisUtterance(
-"Welcome sir. Systems online. Access granted.  Now   You   Open   Your   Website"
-);
-msg.rate=.9;msg.pitch=1.1;
-speechSynthesis.speak(msg);
+let msg=new SpeechSynthesisUtterance("Welcome Mister Yeasin. Systems online. Access granted.");
+msg.rate=.9;msg.pitch=1.1;speechSynthesis.speak(msg);
 },1500);
-
-/* Enter button animation + redirect */
-const url="https://sites.google.com/view/mdyeasinarafat992";
-const enter=document.getElementById("enter");
-enter.onclick=()=>{
-document.body.classList.add("exit");
-setTimeout(()=>location.href=url,800);
-};
 
 /* Particle stars */
 const c=document.getElementById("particles");
-const ctx=c.getContext("2d");
-c.width=innerWidth; c.height=innerHeight;
-let p=[];
-for(let i=0;i<150;i++){
-p.push({x:Math.random()*c.width,y:Math.random()*c.height,v:Math.random()*1.5,s:Math.random()*2});
-}
-function anim(){
-ctx.clearRect(0,0,c.width,c.height);
-p.forEach(o=>{
-o.y+=o.v;if(o.y>c.height)o.y=0;
-ctx.fillStyle="rgba(0,247,255,.7)";
-ctx.beginPath();ctx.arc(o.x,o.y,o.s,0,Math.PI*2);ctx.fill();
-});
-requestAnimationFrame(anim);
-}
+const ctx=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+let p=[];for(let i=0;i<150;i++){p.push({x:Math.random()*c.width,y:Math.random()*c.height,v:Math.random()*1.5,s:Math.random()*2});}
+function anim(){ctx.clearRect(0,0,c.width,c.height);p.forEach(o=>{o.y+=o.v;if(o.y>c.height)o.y=0;ctx.fillStyle="rgba(0,247,255,.7)";ctx.beginPath();ctx.arc(o.x,o.y,o.s,0,Math.PI*2);ctx.fill();});requestAnimationFrame(anim);}
 anim();
 
-/* Background sound */
-const bgSound=document.getElementById("bgSound");
-bgSound.volume=.12;
-
-/* Mouse parallax for HUD rings */
+/* Mouse parallax */
 const holo=document.querySelector(".holo-wrap");
-document.addEventListener("mousemove",e=>{
-  const x=e.clientX/window.innerWidth -0.5;
-  const y=e.clientY/window.innerHeight -0.5;
-  holo.style.transform=`translate(-50%,-50%) translate(${x*15}px, ${y*15}px)`;
+document.addEventListener("mousemove",e=>{const x=e.clientX/window.innerWidth-0.5;const y=e.clientY/window.innerHeight-0.5;holo.style.transform=`translate(-50%,-50%) translate(${x*15}px,${y*15}px)`;});
+
+/* FIXED ENTER BUTTON */
+document.getElementById("enter").addEventListener("click",()=>{
+  window.location.href="https://sites.google.com/view/mdyeasinarafat992";
 });
 </script>
 
