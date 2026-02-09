@@ -1,251 +1,345 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hollywood Intro</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+<title>Epic Trailer HUD Intro</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
 <style>
-body, html{
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    font-family:'Poppins',sans-serif;
-    background:black;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
+body{background:black;overflow:hidden;}
 
-/* Fullscreen Video */
-.video-frame{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    border:0;
-    z-index:-2;
+/* Cinematic black bars */
+body::before, body::after{
+content:"";position:fixed;width:100%;height:70px;background:black;z-index:999;
+}
+body::before{top:0;} body::after{bottom:0;}
+
+/* Background video */
+iframe{
+position:fixed;width:100%;height:100%;border:0;z-index:-3;opacity:.3;
 }
 
 /* Overlay */
 .overlay{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
-    z-index:1;
+position:fixed;width:100%;height:100%;
+background:radial-gradient(circle,transparent,black 85%);
+z-index:-2;
 }
 
-/* Logo Animation */
-.logo{
-    position:fixed;
-    top:20%;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:60px;
-    font-weight:700;
-    color:white;
-    letter-spacing:3px;
-    opacity:0;
-    animation:logoFade 2s forwards;
-    z-index:10;
+/* Typing text */
+.title{
+position:absolute;top:28%;left:50%;transform:translate(-50%,-50%);
+font-size:clamp(28px,6vw,75px);letter-spacing:5px;color:#00f7ff;
+text-shadow:0 0 15px #00f7ff;white-space:nowrap;
+border-right:3px solid #00f7ff;padding-right:8px;
+animation:cursor .8s infinite;
 }
-@keyframes logoFade{
-0%{opacity:0; transform:translate(-50%,-50px) scale(0.5);}
-100%{opacity:1; transform:translate(-50%,0) scale(1);}
+@keyframes cursor{50%{border-color:transparent;}}
+
+/* Hologram wrapper */
+.holo-wrap{
+position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);
+width:300px;height:400px;perspective:1000px;z-index:2;
 }
 
-/* Typing Text */
-.typing-text{
-    position:fixed;
-    bottom:150px;
-    width:100%;
-    text-align:center;
-    font-size:40px;
-    color:white;
-    font-weight:600;
-    letter-spacing:2px;
-    z-index:10;
+/* Hologram image */
+.hologram{
+width:100%;height:100%;
+background:url("https://drive.google.com/uc?export=view&id=10oCNj2gCVRXlNfX9Z8S-4cQaWP9JCueM") center/contain no-repeat;
+opacity:.9;
+filter:drop-shadow(0 0 25px #00f7ff) drop-shadow(0 0 60px #00f7ff);
+animation:float 4s ease-in-out infinite;transition:.2s;position:relative;
 }
 
-/* Skip Button */
-#skip{
-    position:fixed;
-    bottom:50px;
-    left:50%;
-    transform:translateX(-50%);
-    padding:15px 45px;
-    font-size:18px;
-    border:none;
-    border-radius:50px;
-    cursor:pointer;
-    background: rgba(255,255,255,0.2);
-    color:white;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    z-index:10;
-}
-#skip:hover{
-    background: rgba(255,255,255,0.5);
-    transform:translateX(-50%) scale(1.05);
+/* Scan lines */
+.hologram::after{
+content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+background:repeating-linear-gradient(to bottom,rgba(0,247,255,.15),rgba(0,247,255,.15) 1px,transparent 2px,transparent 6px);
+mix-blend-mode:screen;
+animation:scan 3s linear infinite;
 }
 
-/* Sound Button */
-#sound{
-    position:fixed;
-    top:30px;
-    right:30px;
-    padding:10px 20px;
-    border:none;
-    border-radius:30px;
-    background: rgba(255,255,255,0.2);
-    color:white;
-    cursor:pointer;
-    z-index:10;
+/* Arc Reactor Glow */
+.hologram::before{
+content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+width:120px;height:120px;border-radius:50%;
+background:radial-gradient(circle,#00f7ff,transparent 70%);
+opacity:.7;
+animation:pulse 2s infinite;
 }
 
-/* Particle Canvas */
-#particles{
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    z-index:-1;
-    pointer-events:none;
+/* Float animation */
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}
+@keyframes scan{0%{background-position:0 0;}100%{background-position:0 100%}}
+@keyframes pulse{0%{transform:translate(-50%,-50%) scale(.8);}50%{transform:translate(-50%,-50%) scale(1.2);}100%{transform:translate(-50%,-50%) scale(.8);}}
+
+/* Rotating HUD rings */
+.hud-ring{
+position:absolute;top:50%;left:50%;
+width:320px;height:320px;
+border:2px solid #00f7ff;border-radius:50%;
+transform:translate(-50%,-50%) rotate(0deg);
+opacity:.5;
+animation:rotateRing 12s linear infinite;
 }
+.hud-ring:nth-child(2){width:360px;height:360px;animation-duration:20s;}
+.hud-ring:nth-child(3){width:400px;height:400px;animation-duration:28s;}
+@keyframes rotateRing{0%{transform:translate(-50%,-50%) rotate(0deg);}100%{transform:translate(-50%,-50%) rotate(360deg);}}
+
+/* Enter button */
+#enter{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);
+padding:16px 60px;border-radius:50px;border:1px solid rgba(0,247,255,.3);
+background:rgba(0,247,255,.08);color:#00f7ff;font-size:17px;cursor:pointer;
+backdrop-filter:blur(8px);transition:.4s;}
+#enter:hover{transform:translateX(-50%) scale(1.2);box-shadow:0 0 50px #00f7ff;}
+
+/* Particles */
+canvas{position:fixed;top:0;left:0;z-index:-1;}
 </style>
 </head>
-
 <body>
 
-<!-- Video -->
-<iframe class="video-frame"
-src="https://drive.google.com/file/d/1Tgi6kDXSFK4RToASXtUHus1KyaB5-xXx/preview?autoplay=1"
-allow="autoplay; fullscreen"
-allowfullscreen>
-</iframe>
+<!-- Background video -->
+<iframe src="https://drive.google.com/file/d/1Tgi6kDXSFK4RToASXtUHus1KyaB5-xXx/preview?autoplay=1&mute=1" allow="autoplay"></iframe>
 
 <div class="overlay"></div>
-
-<!-- Particle Canvas -->
 <canvas id="particles"></canvas>
 
-<!-- Logo -->
-<div class="logo">Hey I am Yeasin Arafat</div>
+<!-- Typing text -->
+<div class="title" id="typing"></div>
 
-<!-- Typing Text -->
-<div class="typing-text" id="typing-text"></div>
+<!-- Hologram -->
+<div class="holo-wrap">
+<div class="hologram" id="holo"></div>
+<div class="hud-ring"></div>
+<div class="hud-ring"></div>
+<div class="hud-ring"></div>
+</div>
 
-<!-- Skip Button -->
-<button id="skip">Skip in 5</button>
+<!-- Enter button -->
+<button id="enter">ENTER SYSTEM</button>
 
-<!-- Sound Button -->
-<button id="sound">Mute 🔇</button>
+<!-- Background cinematic sound -->
+<audio id="bgSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
 
 <script>
-// Redirect URL
-const redirectURL = "https://sites.google.com/view/mdyeasinarafat992";
+/* redirect */
+const url="https://sites.google.com/view/mdyeasinarafat992";
+document.getElementById("enter").onclick=()=>location.href=url;
+setTimeout(()=>location.href=url,30000);
 
-// Typing Text Animation
-let message = "WELCOME TO MY WEBSITE";
-let index = 0;
-let typingText = document.getElementById("typing-text");
-function type(){
-    if(index < message.length){
-        typingText.innerHTML += message.charAt(index);
-        index++;
-        setTimeout(type, 100);
-    }
-}
-setTimeout(type, 1500);
+/* typing */
+const text="WELCOME YEASIN ARAFAT";let i=0;
+function type(){if(i<text.length){document.getElementById("typing").innerHTML+=text.charAt(i);i++;setTimeout(type,70);}}
+setTimeout(type,800);
 
-// Skip Countdown
-let timeLeft = 5;
-let skipBtn = document.getElementById("skip");
-let countdown = setInterval(()=>{
-    if(timeLeft > 0){
-        skipBtn.innerText = "Skip in " + timeLeft;
-        timeLeft--;
-    } else {
-        skipBtn.innerText = "Enter Website";
-        clearInterval(countdown);
-    }
-},1000);
+/* JARVIS Voice */
+setTimeout(()=>{
+let msg=new SpeechSynthesisUtterance("Welcome Mister Yeasin. HUD systems online. Initiating cinematic trailer sequence.");
+msg.rate=.9;msg.pitch=1.2;speechSynthesis.speak(msg);
+},1500);
 
-// Skip Button Click
-skipBtn.onclick = ()=>{
-    window.location.href = redirectURL;
-};
-
-// Sound toggle
-let soundBtn = document.getElementById("sound");
-let isMuted = true;
-soundBtn.onclick = ()=>{
-    const iframe = document.querySelector('.video-frame');
-    isMuted = !isMuted;
-    if(isMuted){
-        soundBtn.innerText = "Mute 🔇";
-        iframe.src = iframe.src.replace("autoplay=1","autoplay=1&mute=1");
-    } else{
-        soundBtn.innerText = "Unmute 🔊";
-        iframe.src = iframe.src.replace("&mute=1","");
-    }
-};
-
-// Auto redirect after 30 sec
-setTimeout(()=>{ window.location.href = redirectURL; },30000);
-
-// -------------------
-// Particle Animation
-// -------------------
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particlesArray = [];
-
-class Particle{
-    constructor(){
-        this.x = Math.random()*canvas.width;
-        this.y = Math.random()*canvas.height;
-        this.size = Math.random()*3 + 1;
-        this.speedX = (Math.random()-0.5)*1.5;
-        this.speedY = (Math.random()-0.5)*1.5;
-        this.color = 'rgba(255,255,255,0.5)';
-    }
-    update(){
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if(this.x <0 || this.x>canvas.width) this.speedX*=-1;
-        if(this.y <0 || this.y>canvas.height) this.speedY*=-1;
-    }
-    draw(){
-        ctx.fillStyle=this.color;
-        ctx.beginPath();
-        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        ctx.fill();
-    }
-}
-
-function initParticles(){ particlesArray=[]; for(let i=0;i<100;i++){ particlesArray.push(new Particle()); } }
-initParticles();
-
-function animateParticles(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particlesArray.forEach(p=>{ p.update(); p.draw(); });
-    requestAnimationFrame(animateParticles);
-}
-animateParticles();
-
-window.addEventListener('resize',()=>{
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initParticles();
+/* 3D HOLOGRAM MOUSE TILT */
+const holo=document.getElementById("holo");
+document.addEventListener("mousemove",(e)=>{
+let x=(window.innerWidth/2-e.pageX)/25;
+let y=(window.innerHeight/2-e.pageY)/25;
+holo.style.transform=`rotateY(${x}deg) rotateX(${-y}deg)`;
 });
+
+/* PARTICLES + LIGHT BEAMS */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;canvas.height=innerHeight;
+let p=[];
+class Particle{
+constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.s=Math.random()*2+0.5;this.v=Math.random()*1.5;}
+update(){this.y+=this.v;if(this.y>canvas.height){this.y=0;this.x=Math.random()*canvas.width;}}
+draw(){ctx.fillStyle="rgba(0,247,255,0.7)";ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fill();}
+}
+function init(){for(let i=0;i<200;i++){p.push(new Particle());}}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(x=>{x.update();x.draw();});requestAnimationFrame(animate);}
+init();
+animate();
+
+/* Play background sound softly */
+const bg=document.getElementById("bgSound");
+bg.volume=0.15;
+bg.play();
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epic Trailer HUD Intro</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
+body{background:black;overflow:hidden;}
+
+/* Cinematic black bars */
+body::before, body::after{
+content:"";position:fixed;width:100%;height:70px;background:black;z-index:999;
+}
+body::before{top:0;} body::after{bottom:0;}
+
+/* Background video */
+iframe{
+position:fixed;width:100%;height:100%;border:0;z-index:-3;opacity:.3;
+}
+
+/* Overlay */
+.overlay{
+position:fixed;width:100%;height:100%;
+background:radial-gradient(circle,transparent,black 85%);
+z-index:-2;
+}
+
+/* Typing text */
+.title{
+position:absolute;top:28%;left:50%;transform:translate(-50%,-50%);
+font-size:clamp(28px,6vw,75px);letter-spacing:5px;color:#00f7ff;
+text-shadow:0 0 15px #00f7ff;white-space:nowrap;
+border-right:3px solid #00f7ff;padding-right:8px;
+animation:cursor .8s infinite;
+}
+@keyframes cursor{50%{border-color:transparent;}}
+
+/* Hologram wrapper */
+.holo-wrap{
+position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);
+width:300px;height:400px;perspective:1000px;z-index:2;
+}
+
+/* Hologram image */
+.hologram{
+width:100%;height:100%;
+background:url("https://drive.google.com/uc?export=view&id=10oCNj2gCVRXlNfX9Z8S-4cQaWP9JCueM") center/contain no-repeat;
+opacity:.9;
+filter:drop-shadow(0 0 25px #00f7ff) drop-shadow(0 0 60px #00f7ff);
+animation:float 4s ease-in-out infinite;transition:.2s;position:relative;
+}
+
+/* Scan lines */
+.hologram::after{
+content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+background:repeating-linear-gradient(to bottom,rgba(0,247,255,.15),rgba(0,247,255,.15) 1px,transparent 2px,transparent 6px);
+mix-blend-mode:screen;
+animation:scan 3s linear infinite;
+}
+
+/* Arc Reactor Glow */
+.hologram::before{
+content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+width:120px;height:120px;border-radius:50%;
+background:radial-gradient(circle,#00f7ff,transparent 70%);
+opacity:.7;
+animation:pulse 2s infinite;
+}
+
+/* Float animation */
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}
+@keyframes scan{0%{background-position:0 0;}100%{background-position:0 100%}}
+@keyframes pulse{0%{transform:translate(-50%,-50%) scale(.8);}50%{transform:translate(-50%,-50%) scale(1.2);}100%{transform:translate(-50%,-50%) scale(.8);}}
+
+/* Rotating HUD rings */
+.hud-ring{
+position:absolute;top:50%;left:50%;
+width:320px;height:320px;
+border:2px solid #00f7ff;border-radius:50%;
+transform:translate(-50%,-50%) rotate(0deg);
+opacity:.5;
+animation:rotateRing 12s linear infinite;
+}
+.hud-ring:nth-child(2){width:360px;height:360px;animation-duration:20s;}
+.hud-ring:nth-child(3){width:400px;height:400px;animation-duration:28s;}
+@keyframes rotateRing{0%{transform:translate(-50%,-50%) rotate(0deg);}100%{transform:translate(-50%,-50%) rotate(360deg);}}
+
+/* Enter button */
+#enter{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);
+padding:16px 60px;border-radius:50px;border:1px solid rgba(0,247,255,.3);
+background:rgba(0,247,255,.08);color:#00f7ff;font-size:17px;cursor:pointer;
+backdrop-filter:blur(8px);transition:.4s;}
+#enter:hover{transform:translateX(-50%) scale(1.2);box-shadow:0 0 50px #00f7ff;}
+
+/* Particles */
+canvas{position:fixed;top:0;left:0;z-index:-1;}
+</style>
+</head>
+<body>
+
+<!-- Background video -->
+<iframe src="https://drive.google.com/file/d/1Tgi6kDXSFK4RToASXtUHus1KyaB5-xXx/preview?autoplay=1&mute=1" allow="autoplay"></iframe>
+
+<div class="overlay"></div>
+<canvas id="particles"></canvas>
+
+<!-- Typing text -->
+<div class="title" id="typing"></div>
+
+<!-- Hologram -->
+<div class="holo-wrap">
+<div class="hologram" id="holo"></div>
+<div class="hud-ring"></div>
+<div class="hud-ring"></div>
+<div class="hud-ring"></div>
+</div>
+
+<!-- Enter button -->
+<button id="enter">ENTER SYSTEM</button>
+
+<!-- Background cinematic sound -->
+<audio id="bgSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
+
+<script>
+/* redirect */
+const url="https://sites.google.com/view/mdyeasinarafat992";
+document.getElementById("enter").onclick=()=>location.href=url;
+setTimeout(()=>location.href=url,30000);
+
+/* typing */
+const text="WELCOME YEASIN ARAFAT";let i=0;
+function type(){if(i<text.length){document.getElementById("typing").innerHTML+=text.charAt(i);i++;setTimeout(type,70);}}
+setTimeout(type,800);
+
+/* JARVIS Voice */
+setTimeout(()=>{
+let msg=new SpeechSynthesisUtterance("Welcome Mister Yeasin. HUD systems online. Initiating cinematic trailer sequence.");
+msg.rate=.9;msg.pitch=1.2;speechSynthesis.speak(msg);
+},1500);
+
+/* 3D HOLOGRAM MOUSE TILT */
+const holo=document.getElementById("holo");
+document.addEventListener("mousemove",(e)=>{
+let x=(window.innerWidth/2-e.pageX)/25;
+let y=(window.innerHeight/2-e.pageY)/25;
+holo.style.transform=`rotateY(${x}deg) rotateX(${-y}deg)`;
+});
+
+/* PARTICLES + LIGHT BEAMS */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;canvas.height=innerHeight;
+let p=[];
+class Particle{
+constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.s=Math.random()*2+0.5;this.v=Math.random()*1.5;}
+update(){this.y+=this.v;if(this.y>canvas.height){this.y=0;this.x=Math.random()*canvas.width;}}
+draw(){ctx.fillStyle="rgba(0,247,255,0.7)";ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fill();}
+}
+function init(){for(let i=0;i<200;i++){p.push(new Particle());}}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(x=>{x.update();x.draw();});requestAnimationFrame(animate);}
+init();
+animate();
+
+/* Play background sound softly */
+const bg=document.getElementById("bgSound");
+bg.volume=0.15;
+bg.play();
 </script>
 
 </body>
