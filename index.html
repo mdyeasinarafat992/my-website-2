@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Epic Trailer HUD Intro</title>
+<title>Epic Iron Man HUD Intro</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
-body{background:black;overflow:hidden;}
+body{overflow:hidden;background:black;}
 
 /* Cinematic bars */
 body::before, body::after{
@@ -16,63 +16,110 @@ content:"";position:fixed;width:100%;height:60px;background:black;z-index:999;
 }
 body::before{top:0;} body::after{bottom:0;}
 
-/* Background video */
-iframe{
-position:fixed;width:100%;height:100%;
-border:0;z-index:-3;opacity:.35;
-}
-
-/* Overlay */
+/* Overlay for cinematic glow */
 .overlay{
 position:fixed;width:100%;height:100%;
-background:radial-gradient(circle,transparent,black 85%);
+background:rgba(0,0,0,.65);
 z-index:-2;
 }
 
 /* Typing text */
 .title{
-position:absolute;top:26%;left:50%;
+position:absolute;top:20%;left:50%;
 transform:translate(-50%,-50%);
 font-size:clamp(24px,6vw,72px);
 letter-spacing:4px;color:#00f7ff;
-text-shadow:0 0 15px #00f7ff;
+text-shadow:0 0 20px #00f7ff, 0 0 40px #00f7ff;
 border-right:3px solid #00f7ff;
 padding-right:8px;
 white-space:nowrap;
 animation:cursor .8s infinite;
+z-index:10;
 }
 @keyframes cursor{50%{border-color:transparent;}}
 
-/* Hologram */
+/* Hologram HUD wrapper */
 .holo-wrap{
-position:absolute;top:55%;left:50%;
+position:absolute;top:50%;left:50%;
 transform:translate(-50%,-50%);
-width:min(280px,70vw);
-height:min(380px,90vw);
+width:min(350px,70vw);
+height:min(350px,70vw);
 perspective:1000px;
-transition:.8s;
+z-index:5;
+animation:float 4s ease-in-out infinite;
 }
-
 @keyframes float{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-14px);}
+0%,100%{transform:translate(-50%, -50%) translateY(0);}
+50%{transform:translate(-50%, -50%) translateY(-15px);}
 }
 
-/* HUD rings */
+/* Base HUD ring */
 .hud-ring{
 position:absolute;top:50%;left:50%;
-width:100%;height:100%;
-border:2px solid rgba(0,247,255,.4);
 border-radius:50%;
 transform:translate(-50%,-50%);
+}
+
+/* Ring 1: segmented rotating arcs */
+.ring1{
+width:120%; height:120%;
+border:2px solid rgba(0,247,255,.4);
+box-shadow:0 0 20px #00f7ff,0 0 40px #00f7ff inset;
+clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%);
 animation:spin 18s linear infinite;
 }
-.hud-ring:nth-child(2){width:120%;height:120%;animation-duration:28s;}
-.hud-ring:nth-child(3){width:140%;height:140%;animation-duration:40s;}
 
+/* Ring 2: dashed orbiting ring */
+.ring2{
+width:140%; height:140%;
+border:2px dashed rgba(0,247,255,.5);
+animation:spinReverse 25s linear infinite;
+}
+
+/* Ring 3: inner concentric line */
+.ring3{
+width:80%; height:80%;
+border:1px solid rgba(0,247,255,.6);
+box-shadow:0 0 10px #00f7ff inset;
+animation:blink 2s infinite;
+}
+
+/* Ring 4: small rotating crosshairs */
+.crosshair{
+position:absolute;top:50%;left:50%;
+width:50%; height:50%;
+border:1px solid rgba(0,247,255,.7);
+border-radius:50%;
+transform:translate(-50%,-50%);
+box-shadow:0 0 20px #00f7ff inset;
+animation:spin 30s linear infinite;
+}
+
+/* Ring animations */
 @keyframes spin{
-from{transform:translate(-50%,-50%) rotate(0);}
+from{transform:translate(-50%,-50%) rotate(0deg);}
 to{transform:translate(-50%,-50%) rotate(360deg);}
+}
+@keyframes spinReverse{
+from{transform:translate(-50%,-50%) rotate(360deg);}
+to{transform:translate(-50%,-50%) rotate(0deg);}
+}
+@keyframes blink{
+0%,100%{opacity:1;}
+50%{opacity:.3;}
+}
+
+/* Holographic scan line */
+.scanline{
+position:absolute;top:0;left:0;
+width:100%; height:2px;
+background:rgba(0,247,255,.3);
+animation:scan 3s linear infinite;
+z-index:6;
+}
+@keyframes scan{
+0%{top:0;}
+100%{top:100%;}
 }
 
 /* Enter button */
@@ -87,6 +134,7 @@ color:#00f7ff;font-size:16px;
 cursor:pointer;
 backdrop-filter:blur(10px);
 transition:.4s;
+z-index:10;
 }
 #enter:hover{
 box-shadow:0 0 40px #00f7ff;
@@ -104,29 +152,35 @@ filter:blur(20px);
 }
 }
 
-/* Particles */
+/* Particles canvas */
 canvas{position:fixed;top:0;left:0;z-index:-1;}
 </style>
 </head>
 
+<body>
+<div class="overlay"></div>
 
 <div class="title" id="typing"></div>
 
 <div class="holo-wrap" id="scene">
-  <div class="hologram"></div>
-  <div class="hud-ring"></div>
-  <div class="hud-ring"></div>
-  <div class="hud-ring"></div>
+  <div class="hud-ring ring1"></div>
+  <div class="hud-ring ring2"></div>
+  <div class="hud-ring ring3"></div>
+  <div class="hud-ring crosshair"></div>
+  <div class="scanline"></div>
 </div>
 
 <button id="enter">ENTER SYSTEM</button>
 
+<canvas id="particles"></canvas>
+
 <audio id="bgSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
 
 <script>
-/* Typing */
+/* Typing effect */
 const text="WELCOME YEASIN ARAFAT";
 let i=0;
+const typing=document.getElementById('typing');
 function type(){
 if(i<text.length){
 typing.innerHTML+=text.charAt(i++);
@@ -134,25 +188,27 @@ setTimeout(type,70);
 }}
 setTimeout(type,700);
 
-/* Voice */
+/* Voice announcement */
 setTimeout(()=>{
 let msg=new SpeechSynthesisUtterance(
-"Welcome Mister Yeasin. Systems online. Access granted."
+"Welcome sir. Systems online. Access granted.  Now   You   Open   Your   Website"
 );
 msg.rate=.9;msg.pitch=1.1;
 speechSynthesis.speak(msg);
 },1500);
 
-/* Enter animation + redirect */
+/* Enter button animation + redirect */
 const url="https://sites.google.com/view/mdyeasinarafat992";
+const enter=document.getElementById("enter");
 enter.onclick=()=>{
 document.body.classList.add("exit");
 setTimeout(()=>location.href=url,800);
 };
 
-/* Particles */
-const c=particles,ctx=c.getContext("2d");
-c.width=innerWidth;c.height=innerHeight;
+/* Particle stars */
+const c=document.getElementById("particles");
+const ctx=c.getContext("2d");
+c.width=innerWidth; c.height=innerHeight;
 let p=[];
 for(let i=0;i<150;i++){
 p.push({x:Math.random()*c.width,y:Math.random()*c.height,v:Math.random()*1.5,s:Math.random()*2});
@@ -168,8 +224,17 @@ requestAnimationFrame(anim);
 }
 anim();
 
-/* Sound */
+/* Background sound */
+const bgSound=document.getElementById("bgSound");
 bgSound.volume=.12;
+
+/* Mouse parallax for HUD rings */
+const holo=document.querySelector(".holo-wrap");
+document.addEventListener("mousemove",e=>{
+  const x=e.clientX/window.innerWidth -0.5;
+  const y=e.clientY/window.innerHeight -0.5;
+  holo.style.transform=`translate(-50%,-50%) translate(${x*15}px, ${y*15}px)`;
+});
 </script>
 
 </body>
